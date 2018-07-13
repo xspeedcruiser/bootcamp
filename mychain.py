@@ -69,7 +69,10 @@ class Block:
         return hash_message(block_rep)
 
     def finalize(self):
-        self.hash = self._hash_block()
+        if self.hash is None:
+            self.hash = self._hash_block()
+        else:
+            raise ValueError("Block already final")
 
     def validate(self):
         return self.hash == self._hash_block()

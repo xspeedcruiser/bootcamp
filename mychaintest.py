@@ -10,8 +10,6 @@ class TestHashing(unittest.TestCase):
 
     def test_hash_not_equeal(self):
         self.assertNotEquals(hash_message("Test"), hash_message("test"))
-
-
 class TransactionTest(unittest.TestCase):
 
     def setUp(self):
@@ -27,6 +25,7 @@ class BlockTest(unittest.TestCase):
 
     def setUp(self):
         self.tx = Transaction("Satheesh", "Chaitra", 10)
+        self.newtx = Transaction("Chaitra", "Nala", 10)
         self.block = Block()
 
     def test_add_block(self):
@@ -35,12 +34,34 @@ class BlockTest(unittest.TestCase):
         self.assertEqual(self.block.transaction_count, 1)
 
     def test_not_final(self):
+        self.assertFalse(self.block.validate())
         self.assertIsNone(self.block.hash)
 
     def test_finalize(self):
+        self.assertFalse(self.block.validate())
         self.block.finalize()
         self.assertIsNotNone(self.block.hash)
+        self.assertIsNone(self.block.prev_hash)
         self.assertEqual(self.block.height, 1)
+        self.assertTrue(self.block.validate())
+    
+    def test_finalize_twice(self):
+        self.block.finalize()
+        with self.assertRaises(ValueError):
+            self.block.finalize()   
+
+    def test_finalize_false(self):
+        self.assertFalse(self.block.validate())
+        self.assertIsNone(self.block.hash)
+        self.block.finalize()
+        old_hash = self.block.hash
+        self.assertTrue(self.block.validate())
+        self.block.add_transaction(self.newtx)
+        with self.assertRaises(ValueError):
+            self.block.finalize()
+        new_hash = self.block.hash
+        self.assertEqual(old_hash, new_hash)
+        self.assertFalse(self.block.validate())
 
 
 if __name__ == '__main__':
