@@ -93,16 +93,22 @@ def loadchain(datafile):
 
 
 def validatechain(blockchain):
+    print(len(blockchain))
     for block in blockchain:
         if block.validate():
-            print("validating block {}".format(block.height))
-            print(len(blockchain))
-            if block.height != len(blockchain):
-                print("Prev hash {} \n Prev block hash {}".format(block.prev_hash,
-                                                                  blockchain[block.height-1].hash))
-                print("Block {} is valid".format(block.height))
+            print("Block #{} is valid".format(block.height))
+            if block.height != 1:
+                if block.prev_hash != blockchain[block.height-2].hash:
+                    print("Prev hash {} != Prev block hash {}".format(block.prev_hash,
+                                                                      blockchain[block.height-2].hash))
+                    return False
+                print("Block #{} Prev hash {} == Prev block hash {}".format(block.height, block.prev_hash,
+                                                                            blockchain[block.height-2].hash))
         else:
             print ("Block {} is invalid".format(block.height))
+            return False
+    else:
+        return True
 
 
 def main():
@@ -113,7 +119,7 @@ def main():
     block = Block()
     a = Transaction("Satheesh", "Chaitra", 10)
     b = Transaction("Chaitra", "Nala", 5)
-    print(a)
+    # print(a)
     block.add_transaction(a)
     block.add_transaction(b)
     block.finalize()
@@ -127,15 +133,15 @@ def main():
     newblock.finalize()
     blockchain.append(newblock)
     savechain(blockchain, "blockchain.json")
-    validatechain(blockchain)
+    # validatechain(blockchain)
     blockchain = loadchain("blockchain.json")
-    validatechain(blockchain)
     thirdblock = Block(blockchain)
     d = Transaction("Jeeva", "Satheesh", 2)
     thirdblock.add_transaction(d)
     thirdblock.finalize()
     blockchain.append(thirdblock)
     savechain(blockchain, "blockchain.json")
+    print(validatechain(blockchain))
 
 
 if __name__ == "__main__":
