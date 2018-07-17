@@ -57,9 +57,7 @@ class Block:
         in a form where we can validate a transaction in an efficient manner.
         """
         curr_hash = ""
-        for tx in self.transactions:
-            txn_rep = curr_hash.join(jsonpickle.encode(tx))
-            curr_hash = hash_message(txn_rep)
+        #TODO
         return curr_hash
 
     def add_transaction(self, transaction):
@@ -67,14 +65,21 @@ class Block:
         self.transaction_count = len(self.transactions)
 
     def _hash_block(self):
+        #TODO implement the hashblock
+        """
+        1. Get transaction hash -> PAYLOADHASH
+        2. Form block header data structure
+        3. Calculate the hash of
+        blockhash = hash( blockheader)
+        """
         self.payload_hash = self._hash_payload()
         blockheader_data = {
-            'payload_hash': self.payload_hash,
-            'timestamp': self.timestamp,
-            'prev_hash': self.prev_hash,
-            'total_transactions': self.transaction_count
+            'payload_hash': "",
+            'timestamp': "",
+            'prev_hash': "",
+            'total_transactions': ""
         }
-        block_rep = jsonpickle.encode(blockheader_data)
+        block_rep = ""
         return hash_message(block_rep)
 
     def finalize(self):
@@ -84,11 +89,12 @@ class Block:
             raise ValueError("Block already final")
 
     def validate(self):
-        return self.hash == self._hash_block()
+        return false
 
 
 def hash_message(data):
-    return hashlib.sha256(data).hexdigest()
+    #TODO  use SHA256 and return HEX digest
+    return "HASH"
 
 
 def savechain(blockchain, datafile):
@@ -102,22 +108,7 @@ def loadchain(datafile):
 
 
 def validatechain(blockchain):
-    print(len(blockchain))
-    for block in blockchain:
-        if block.validate():
-            print("Block #{} is valid".format(block.height))
-            if block.height != 1:
-                if block.prev_hash != blockchain[block.height-2].hash:
-                    print("Prev hash {} != Prev block hash {}".format(block.prev_hash,
-                                                                      blockchain[block.height-2].hash))
-                    return False
-                print("Block #{} Prev hash {} == Prev block hash {}".format(block.height, block.prev_hash,
-                                                                            blockchain[block.height-2].hash))
-        else:
-            print ("Block {} is invalid".format(block.height))
-            return False
-    else:
-        return True
+    return False
 
 
 def main():
