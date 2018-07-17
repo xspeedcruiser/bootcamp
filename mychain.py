@@ -40,13 +40,22 @@ class Block:
             self.height = 1
         self.hash = None
         self.timestamp = time()
-        self.payload_hash = self._hash_payload()
         self.transaction_count = 0
 
     def _hash_payload(self):
         return self._hash_transactions()
-
+    
+    
     def _hash_transactions(self):
+        """
+        This is a very crude implementation of transactions hashing where
+        
+        hash = hash(curr_hash + curr_txn)
+        
+        We will switch this to a merkle-tree implementaion in the future 
+        workshops. A merkle-tree is a data-structure to store the transaction 
+        in a form where we can validate a transaction in an efficient manner.
+        """
         curr_hash = ""
         for tx in self.transactions:
             txn_rep = curr_hash.join(jsonpickle.encode(tx))

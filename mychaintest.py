@@ -85,6 +85,21 @@ class BlockChainTest(unittest.TestCase):
         self.blockchain.append(newblock)
         self.assertTrue(validatechain(self.blockchain))
 
+    def test_invalid_blockchain(self):
+        newblock = Block(blockchain=self.blockchain)
+        newtx = Transaction("Jeeva", "Satheesh", 2)
+        newblock.add_transaction(newtx)
+        newblock.finalize()
+        self.blockchain.append(newblock)
+        thirdblock = Block(blockchain=self.blockchain)
+        anothertx = Transaction("Jeeva", "Vinoth", 2)
+        thirdblock.add_transaction(anothertx)
+        thirdblock.finalize()
+        #self.assertTrue(validatechain(self.blockchain))
+        newblock.add_transaction(anothertx)
+        self.blockchain[1] = newblock
+        self.assertFalse(validatechain(self.blockchain))
+
 
 if __name__ == '__main__':
     unittest.main()
